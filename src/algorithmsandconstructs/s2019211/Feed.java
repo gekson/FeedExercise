@@ -12,12 +12,20 @@ public class Feed implements FeedInterface {
         feedList = new ArrayList<>();
     }
 
+    /**
+     * Add an Item in a List and sort after using a mergesort method
+     * @param item -New Feed item
+     */
     @Override
     public void addItem(FeedItem item) {
         feedList.add(item);
         mergeSortFeedItem(feedList);
     }
 
+    /**
+     * Read the list of FeedItem and return all titles
+     * @return
+     */
     @Override
     public Collection<String> listTitles() {
         List<String> list = new ArrayList<>();
@@ -27,6 +35,11 @@ public class Feed implements FeedInterface {
         return list;
     }
 
+    /**
+     * Get a list of titles and get a binary search for a required title, after get the correct item in List of FeedItem
+     * @param  title the title of the item to find.
+     * @return
+     */
     @Override
     public FeedItem getItem(String title) {
         String[] titles = listTitles().toArray(new String[0]);
@@ -34,11 +47,23 @@ public class Feed implements FeedInterface {
         return item >= 0 ? feedList.get(item) : null;
     }
 
+    /**
+     * Get total list items
+     * @return
+     */
     @Override
     public int numItems() {
         return feedList.size();
     }
 
+    /**
+     * Get the titles, then scrolls through the list of titles, for each title,
+     * creates an array of words, performs an order using the mergesort method,
+     * then performs a binary search for the required word,
+     * if found stores the title in a return list and stops loop processing and go to the next title.
+     * @param keyword the keyword to search for.
+     * @return
+     */
     @Override
     public Collection<FeedItem> findItems(String keyword) {
         List<FeedItem> feedItems = new ArrayList<>();
@@ -58,6 +83,20 @@ public class Feed implements FeedInterface {
         return feedItems;
     }
 
+    /**
+     * Auxiliary method to perform a binary recursive search on an array of titles.
+     * The binarySearch method takes a sortedArray, key & the low & high indexes of the sortedArray as arguments.
+     * When the method runs for the first time the low, the first index of the sortedArray, is 0, while the high,
+     * the last index of the sortedArray, is equal to its length – 1.
+     *
+     * The middle is the middle index of the sortedArray.
+     * Now the algorithm runs a while loop comparing the key with the array value of the middle index of the sortedArray.
+     * @param titles the Array to search for
+     * @param low
+     * @param high
+     * @param key the key to search for
+     * @return
+     */
     private int binarySearch(String[] titles, int low, int high, String key) {
         if(low > high)
             return -low - 1;
@@ -70,6 +109,16 @@ public class Feed implements FeedInterface {
             return binarySearch(titles, mid +1, high, key);
     }
 
+    /**
+     * Auxiliary method to sort a array of String.
+     * The base condition checks if the array length is greater 1.
+     * For the rest of the cases, the recursive call will be executed.
+     * For the recursive case, we get the middle index and create two temporary arrays.
+     * The mergeSort function is then called recursively for both the sub-arrays.
+     *
+     * We then call the merge function which takes in the input and both the sub-arrays
+     * @param array
+     */
     private void mergeSortString(String[] array) {
 
         if (array.length > 1) {
@@ -78,9 +127,6 @@ public class Feed implements FeedInterface {
             String[] firstHalf = new String[firstHalfSize];
             System.arraycopy(array, 0, firstHalf, 0, firstHalfSize);
             mergeSortString(firstHalf);
-
-            mergeSortString(firstHalf);
-
 
             int secondHalfSize = array.length - firstHalfSize;
             String[] secondHalf = new String[secondHalfSize];
@@ -92,6 +138,16 @@ public class Feed implements FeedInterface {
         }
     }
 
+    /**
+     * Auxiliary method to Merge arrays.
+     * The merge function compares the elements of both sub-arrays one by one and places the smaller element into the input array.
+     *
+     * When we reach the end of one of the sub-arrays,
+     * the rest of the elements from the other array are copied into the input array thereby giving us the final sorted array
+     * @param a
+     * @param b
+     * @param s
+     */
     private void merge(String[] a, String[] b, String[] s) {
 
         int counterA = 0;
@@ -124,6 +180,17 @@ public class Feed implements FeedInterface {
         }
     }
 
+    /**
+     * Auxiliary method to sort a List of FeedItem.
+     * Auxiliary method to sort a array of String.
+     * The base condition checks if the array length is greater 1.
+     * For the rest of the cases, the recursive call will be executed.
+     * For the recursive case, we get the middle index and create two temporary arrays.
+     * The mergeSort function is then called recursively for both the sub-arrays.
+     *
+     * We then call the merge function which takes in the input and both the sub-arrays
+     * @param array
+     */
     private void mergeSortFeedItem(List<FeedItem> array) {
 
         if (array.size() > 1) {
@@ -149,6 +216,16 @@ public class Feed implements FeedInterface {
         }
     }
 
+    /**
+     * Auxiliary method to Merge List.
+     * The merge function compares the elements of both sub-arrays one by one and places the smaller element into the input array.
+     *
+     * When we reach the end of one of the sub-arrays,
+     * the rest of the elements from the other array are copied into the input array thereby giving us the final sorted array
+     * @param a
+     * @param b
+     * @param s
+     */
     private void merge(List<FeedItem> a, List<FeedItem> b, List<FeedItem> s) {
 
         int counterA = 0;
