@@ -23,7 +23,11 @@ public class FeedReader {
 		FeedInterface feed = factory.createFeed(in);
     
 		System.out.println("=== News items ===");
-		
+		System.out.println(feed.getItem("BREAKING NEWS").getContent());
+		System.out.println(feed.getItem("NOT QUITE SOME BREAKING NEWS").getContent());
+		System.out.println(feed.getItem("EVEN LESS IMPORTANT NEWS").getContent());
+		feed.findItems("BREAKING").stream().forEach(e-> System.out.println(e.getContent()));
+
 		for(String title : feed.listTitles()) {
 			System.out.println(title);
 		}

@@ -3,13 +3,11 @@ package algorithmsandconstructs.s2019211;
 import algorithmsandconstructs.FeedInterface;
 import algorithmsandconstructs.FeedItem;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class Feed implements FeedInterface {
     private List<FeedItem> feedList;
+    private FeedItem[] feedListArray;
 
     public Feed() {
         feedList = new ArrayList<>();
@@ -22,9 +20,10 @@ public class Feed implements FeedInterface {
 
     @Override
     public Collection<String> listTitles() {
-        feedList = quickSortFeedItem(feedList);
+        feedListArray = feedList.toArray(new FeedItem[feedList.size()]);
+        mergeSortFeedItem(feedListArray);
         List<String> list = new ArrayList<>();
-        for (FeedItem feedItem : quickSortFeedItem(feedList)) {
+        for (FeedItem feedItem : feedListArray) {
             list.add(feedItem.getTitle());
         }
         return list;
@@ -34,7 +33,7 @@ public class Feed implements FeedInterface {
     public FeedItem getItem(String title) {
         String[] titles = listTitles().toArray(new String[0]);
         int item = binarySearch(titles, 0, titles.length - 1, title);
-        return item >= 0 ? feedList.get(item) : null;
+        return item >= 0 ? feedListArray[item] : null;
     }
 
     @Override
@@ -49,7 +48,8 @@ public class Feed implements FeedInterface {
         for (String title: list) {
             String[] keys = title.split(" ");
             List<String> listKeys = Arrays.asList(keys);
-            keys = quickSort(listKeys).toArray(new String[list.size()]);
+            mergeSortString(listKeys);
+//            keys = quickSort(listKeys).toArray(new String[list.size()]);
             for (String key: keys){
                 int item = binarySearch(keys, 0, keys.length - 1, keyword);
                 if(item >= 0) {
@@ -118,47 +118,115 @@ public class Feed implements FeedInterface {
         return list;
     }
 
-    private List<FeedItem> quickSortFeedItem(List<FeedItem> input){
+    private void mergeSortFeedItem(FeedItem[] array) {
 
-        if(input.size() <= 1){
-            return input;
+        if (array.length > 1) {
+
+            int firstHalfSize = array.length / 2;
+            FeedItem[] firstHalf = new FeedItem[firstHalfSize];
+            System.arraycopy(array, 0, firstHalf, 0, firstHalfSize);
+            mergeSortFeedItem(firstHalf);
+
+            mergeSortFeedItem(firstHalf);
+
+
+            int secondHalfSize = array.length - firstHalfSize;
+            FeedItem[] secondHalf = new FeedItem[secondHalfSize];
+            System.arraycopy(array, firstHalfSize, secondHalf, 0, secondHalfSize);
+            mergeSortFeedItem(secondHalf);
+
+            merge(firstHalf, secondHalf, array);
+
         }
-
-        int middle = (int) Math.ceil((double)input.size() / 2);
-        FeedItem pivot = input.get(middle);
-
-        List<FeedItem> less = new ArrayList<FeedItem>();
-        List<FeedItem> greater = new ArrayList<FeedItem>();
-
-        for (int i = 0; i < input.size(); i++) {
-            if(input.get(i).getTitle().compareTo(pivot.getTitle()) <= 0){
-                if(i == middle){
-                    continue;
-                }
-                less.add(input.get(i));
-            }
-            else{
-                greater.add(input.get(i));
-            }
-        }
-
-        return concatenate(quickSortFeedItem(less), pivot, quickSortFeedItem(greater));
     }
 
-    private List<FeedItem> concatenate(List<FeedItem> less, FeedItem pivot, List<FeedItem> greater){
+    public void merge(FeedItem[] a, FeedItem[] b, FeedItem[] s) {
 
-        List<FeedItem> list = new ArrayList<FeedItem>();
+        int counterA = 0;
+        int counterB = 0;
+        int counterS = 0;
 
-        for (int i = 0; i < less.size(); i++) {
-            list.add(less.get(i));
+        while(counterA < a.length && counterB < b.length) {
+
+            if(a[counterA].getTitle().compareTo(b[counterB].getTitle()) < 0) {
+                s[counterS] = a[counterA];
+                counterA++;
+            }
+            else {
+                s[counterS] = b[counterB];
+                counterB++;
+            }
+
+            counterS++;
         }
 
-        list.add(pivot);
+        while (counterA < a.length) {
+            s[counterS] = a[counterA];
+            counterA++;
+            counterS++;
+        }
+        while(counterB < b.length) {
+            s[counterS] = b[counterB];
+            counterB++;
+            counterS++;
+        }
+    }
 
-        for (int i = 0; i < greater.size(); i++) {
-            list.add(greater.get(i));
+    private void mergeSortString(List<String> array) {
+
+        if (array.size() > 1) {
+
+            int firstHalfSize = array.size() / 2;
+            List<String> firstHalf = new ArrayList<String>();
+            String[] firstHalfAux = new String[firstHalfSize];
+            System.arraycopy(array.toArray(new String[0]), 0, firstHalfAux, 0, firstHalfSize);
+            firstHalf.addAll(Arrays.asList(firstHalfAux));
+
+            mergeSortString(firstHalf);
+
+
+            int secondHalfSize = array.size() - firstHalfSize;
+            String[] secondHalfAux = new String[secondHalfSize];
+            List<String> secondHalf = new ArrayList<String>();
+            System.arraycopy(array.toArray(new String[0]), firstHalfSize, secondHalfAux, 0, secondHalfSize);
+            secondHalf.addAll(Arrays.asList(secondHalfAux));
+            mergeSortString(secondHalf);
+
+            merge(firstHalf, secondHalf, array);
+
+        }
+    }
+
+    public void merge(List<String> a, List<String> b, List<String> s) {
+
+        int counterA = 0;
+        int counterB = 0;
+        int counterS = 0;
+
+        while(counterA < a.size() && counterB < b.size()) {
+
+//            if(a[counterA].getTitle().compareTo(b[counterB].getTitle()) < 0) {
+            if(a.get(counterA).compareTo(b.get(counterB)) < 0) {
+                s.set(counterS, a.get(counterA));
+                counterA++;
+            }
+            else {
+                s.set(counterS, b.get(counterB));
+                counterB++;
+            }
+
+            counterS++;
         }
 
-        return list;
+        while (counterA < a.size()) {
+            s.set(counterS,  a.get(counterA));
+            counterA++;
+            counterS++;
+        }
+        while(counterB < b.size()) {
+            s.set(counterS, b.get(counterB));
+            counterB++;
+            counterS++;
+        }
     }
 }
