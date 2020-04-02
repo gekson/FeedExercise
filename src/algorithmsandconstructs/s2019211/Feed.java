@@ -15,11 +15,11 @@ public class Feed implements FeedInterface {
     @Override
     public void addItem(FeedItem item) {
         feedList.add(item);
+        mergeSortFeedItem(feedList);
     }
 
     @Override
     public Collection<String> listTitles() {
-        mergeSortFeedItem(feedList);
         List<String> list = new ArrayList<>();
         for (FeedItem feedItem : feedList) {
             list.add(feedItem.getTitle());
@@ -92,7 +92,7 @@ public class Feed implements FeedInterface {
         }
     }
 
-    public void merge(String[] a, String[] b, String[] s) {
+    private void merge(String[] a, String[] b, String[] s) {
 
         int counterA = 0;
         int counterB = 0;
@@ -149,7 +149,7 @@ public class Feed implements FeedInterface {
         }
     }
 
-    public void merge(List<FeedItem> a, List<FeedItem> b, List<FeedItem> s) {
+    private void merge(List<FeedItem> a, List<FeedItem> b, List<FeedItem> s) {
 
         int counterA = 0;
         int counterB = 0;
